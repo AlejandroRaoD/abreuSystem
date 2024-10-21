@@ -1,0 +1,75 @@
+/* src/AppPage.css */
+
+.content-wrapper {
+  display: flex;
+  justify-content: space-between; 
+  padding: 20px;
+  position: relative; /* Permitir el uso de posición absoluta */
+}
+
+.calendar-container {
+  position: absolute; 
+  top: 20px; 
+  right: 20px;
+  border: 1px solid #ccc; 
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  padding: 10px;
+  width: 220px;
+  z-index: 1;
+}
+
+.calendar {
+  width: 100%;
+}
+
+.add-date-button {
+  margin-top: 10px;
+  background-color: #5a9bd4;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-date-button:hover {
+  background-color: #4a8bd4;
+}
+
+
+.text-content {
+  flex-grow: 1;
+  padding: 10px;
+  margin-right: 240px;
+}
+
+.marked-date {
+  background-color: #ffd700;
+  border-radius: 50%;
+  color: white;
+}
+
+.marked-dates-list {
+  margin-top: 20px;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.remove-date-button {
+  margin-left: 10px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.remove-date-button:hover {
+  background-color: #d32f2f;
+}
