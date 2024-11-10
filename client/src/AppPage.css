@@ -1,75 +1,167 @@
-/* src/AppPage.css */
-
-.content-wrapper {
-  display: flex;
-  justify-content: space-between; 
-  padding: 20px;
-  position: relative; /* Permitir el uso de posición absoluta */
-}
-
-.calendar-container {
-  position: absolute; 
-  top: 20px; 
-  right: 20px;
-  border: 1px solid #ccc; 
-  border-radius: 5px;
+/* Estilo de caja individual para cada estudiante */
+.student-box {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 5px;
+  border-radius: 8px;
   background-color: #f9f9f9;
-  padding: 10px;
-  width: 220px;
-  z-index: 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
 }
 
-.calendar {
-  width: 100%;
+.student-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.add-date-button {
-  margin-top: 10px;
-  background-color: #5a9bd4;
+/* Botón de "Ver más" */
+.view-more-btn {
+  background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 3px;
-  padding: 8px 12px;
+  padding: 10px 15px;
+  border-radius: 5px;
   cursor: pointer;
+  margin-top: 10px;
+  font-size: 14px;
   transition: background-color 0.3s ease;
 }
 
-.add-date-button:hover {
-  background-color: #4a8bd4;
+.view-more-btn:hover {
+  background-color: #0056b3;
 }
 
-
-.text-content {
-  flex-grow: 1;
-  padding: 10px;
-  margin-right: 240px;
-}
-
-.marked-date {
-  background-color: #ffd700;
-  border-radius: 50%;
-  color: white;
-}
-
-.marked-dates-list {
+/* Estilo de las cajas de filtro */
+.filters-container {
   margin-top: 20px;
-  max-height: 150px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.filters input, .filters select {
+  flex: 1;
+  min-width: 180px;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 14px;
+}
+
+.filters input:focus, .filters select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.filters-container h3 {
+  flex-basis: 100%;
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #555;
+}
+
+/* Modal para Ver Más */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  max-height: 90%;
   overflow-y: auto;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 5px;
-  background-color: #f9f9f9;
 }
 
-.remove-date-button {
-  margin-left: 10px;
-  background-color: #f44336;
-  color: white;
+.close-button {
+  background: none;
   border: none;
-  border-radius: 5px;
+  font-size: 18px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
   cursor: pointer;
+  color: #333;
 }
 
-.remove-date-button:hover {
-  background-color: #d32f2f;
+.close-button:hover {
+  color: #007bff;
+}
+
+/* Ajustes para las cajas de estudiantes */
+.data-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+  overflow: auto;
+}
+
+.student-column {
+  width: 48%;
+}
+
+.student-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.student-info {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Estilo para los botones de selección de tabla */
+.table-selector button {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.table-selector button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.table-selector button.active {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+/* Ajuste de layout para pantallas pequeñas */
+@media screen and (max-width: 768px) {
+  .student-column {
+    width: 100%;
+  }
+
+  .filters-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modal {
+    width: 95%;
+  }
 }

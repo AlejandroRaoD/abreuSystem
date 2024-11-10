@@ -1,86 +1,244 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css'; // Importar estilos del calendario
-import './AppPage.css'; // Importar el archivo de estilos específico
+import './AppPage.css';
 
 function AppPage() {
-  const [date, setDate] = useState(new Date());
-  const [markedDates, setMarkedDates] = useState([]); // Estado para las fechas marcadas
-  const [selectedDate, setSelectedDate] = useState(null); // Estado para la fecha seleccionada
+  const [selectedTable, setSelectedTable] = useState('Estudiantes');
+  const [filters, setFilters] = useState({});
+  const [dataList, setDataList] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null); // Guarda el estudiante o empleado seleccionado para el modal
 
-  const handleDateChange = (newDate) => {
-    setDate(newDate);
+  const handleTableChange = (table) => {
+    setSelectedTable(table);
+    setFilters({});
   };
 
-  const handleAddDate = () => {
-    const newDate = date.toDateString();
-    if (!markedDates.some(d => d.date === newDate)) {
-      // Permite agregar una notificación personalizada para cada fecha
-      const notificationMessage = prompt(`Ingresa el mensaje para la fecha ${newDate}:`, "Tienes un evento importante.");
-      setMarkedDates([...markedDates, { date: newDate, message: notificationMessage || "Fecha marcada." }]);
-      setSelectedDate(date); // Establece la fecha seleccionada
-      alert(`Fecha añadida: ${newDate}`); // Mensaje de confirmación
-    } else {
-      alert(`La fecha ${newDate} ya está añadida.`);
+  const handleFilterChange = (filterName, value) => {
+    setFilters((prevFilters) => ({ ...prevFilters, [filterName]: value }));
+  };
+
+  const handleViewMore = (item) => {
+    setSelectedItem(item); // Guarda el estudiante o empleado seleccionado en el estado
+  };
+
+  const closeModal = () => {
+    setSelectedItem(null); // Cierra el modal
+  };
+
+  useEffect(() => {
+    // Cambia los datos según la tabla seleccionada
+    if (selectedTable === 'Estudiantes') {
+      setDataList([
+        { id: 1, nombre: 'John', apellido: 'Doe', programa: 'Música Clásica', catedra: 'Piano', inscrito: 'Inscrito', edad: 12, sexo: 'M', ci: 'V-12345678', fechaInscripcion: '2023-01-01' },
+        { id: 2, nombre: 'Jane', apellido: 'Doe', programa: 'Orquesta Juvenil', catedra: 'Violín', inscrito: 'Reinscrito', edad: 15, sexo: 'F', ci: 'V-87654321', fechaInscripcion: '2022-12-01' },
+      ]);
+    } else if (selectedTable === 'Empleados') {
+      setDataList([
+        { id: 1, nombre: 'Carlos', apellido: 'Perez', ci: 'V-23456789', genero: 'M', cargo: 'Profesor', telefono: '0414-1234567', programa: 'Orquesta Juvenil' },
+        { id: 2, nombre: 'Ana', apellido: 'Gomez', ci: 'V-34567890', genero: 'F', cargo: 'Coordinadora', telefono: '0424-9876543', programa: 'Coro Infantil' },
+      ]);
+    }
+  }, [selectedTable, filters]);
+
+  const renderFilters = () => {
+    switch (selectedTable) {
+      case 'Estudiantes':
+        return (
+          <div className="filters">
+            <input type="text" placeholder="Nombre" onChange={(e) => handleFilterChange('nombre', e.target.value)} />
+            <input type="text" placeholder="Apellido" onChange={(e) => handleFilterChange('apellido', e.target.value)} />
+            <select onChange={(e) => handleFilterChange('programa', e.target.value)}>
+              <option value="">Seleccione un Programa</option>
+              <option value="Música Clásica">Música Clásica</option>
+              <option value="Orquesta Juvenil">Orquesta Juvenil</option>
+              <option value="Coro Infantil">Coro Infantil</option>
+            </select>
+            <select onChange={(e) => handleFilterChange('catedra', e.target.value)}>
+              <option value="">Seleccione una Cátedra</option>
+              <option value="Piano">Piano</option>
+              <option value="Violín">Violín</option>
+              <option value="Percusión">Percusión</option>
+            </select>
+            <select onChange={(e) => handleFilterChange('sexo', e.target.value)}>
+              <option value="">Seleccione el Género</option>
+              <option value="M">Masculino</option>
+              <option value="F">Femenino</option>
+            </select>
+            <input type="number" placeholder="Edad" onChange={(e) => handleFilterChange('edad', e.target.value)} />
+            <input type="text" placeholder="Cédula de Identidad (C.I.)" onChange={(e) => handleFilterChange('ci', e.target.value)} />
+            <input type="date" placeholder="Fecha de Inscripción" onChange={(e) => handleFilterChange('fechaInscripcion', e.target.value)} />
+          </div>
+        );
+      case 'Empleados':
+        return (
+          <div className="filters">
+            <input type="text" placeholder="Nombre" onChange={(e) => handleFilterChange('nombre', e.target.value)} />
+            <input type="text" placeholder="Apellido" onChange={(e) => handleFilterChange('apellido', e.target.value)} />
+            <input type="text" placeholder="Cédula de Identidad (C.I.)" onChange={(e) => handleFilterChange('ci', e.target.value)} />
+            <select onChange={(e) => handleFilterChange('genero', e.target.value)}>
+              <option value="">Seleccione el Género</option>
+              <option value="M">Masculino</option>
+              <option value="F">Femenino</option>
+            </select>
+            <select onChange={(e) => handleFilterChange('cargo', e.target.value)}>
+              <option value="">Seleccione un Cargo</option>
+              <option value="Profesor">Profesor</option>
+              <option value="Coordinador">Coordinador</option>
+            </select>
+            <input type="text" placeholder="Teléfono" onChange={(e) => handleFilterChange('telefono', e.target.value)} />
+            <select onChange={(e) => handleFilterChange('programa', e.target.value)}>
+              <option value="">Seleccione un Programa</option>
+              <option value="Orquesta Juvenil">Orquesta Juvenil</option>
+              <option value="Coro Infantil">Coro Infantil</option>
+            </select>
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
-  const handleRemoveDate = (dateToRemove) => {
-    setMarkedDates(markedDates.filter(markedDate => markedDate.date !== dateToRemove));
-    alert(`Fecha eliminada: ${dateToRemove}`);
+  const renderDataBox = (item) => (
+    <div key={item.id} className="student-box">
+      <div className="student-info">
+        <div className="student-row">
+          <div className="student-column">
+            <p><strong>Nombre:</strong></p>
+            <p>{item.nombre}</p>
+          </div>
+          <div className="student-column">
+            <p><strong>Apellido:</strong></p>
+            <p>{item.apellido}</p>
+          </div>
+        </div>
+        <div className="student-row">
+          <div className="student-column">
+            <p><strong>C.I.:</strong></p>
+            <p>{item.ci}</p>
+          </div>
+          <div className="student-column">
+            <p><strong>Programa:</strong></p>
+            <p>{item.programa}</p>
+          </div>
+        </div>
+        {selectedTable === 'Estudiantes' ? (
+          <>
+            <div className="student-row">
+              <div className="student-column">
+                <p><strong>Cátedra:</strong></p>
+                <p>{item.catedra}</p>
+              </div>
+              <div className="student-column">
+                <p><strong>Inscripción:</strong></p>
+                <p>{item.inscrito}</p>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="student-row">
+              <div className="student-column">
+                <p><strong>Cargo:</strong></p>
+                <p>{item.cargo}</p>
+              </div>
+              <div className="student-column">
+                <p><strong>Teléfono:</strong></p>
+                <p>{item.telefono}</p>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+      <button className="view-more-btn" onClick={() => handleViewMore(item)}>Ver más</button>
+    </div>
+  );
+
+  const renderDataList = () => {
+    if (dataList.length === 0) {
+      return <p>No hay datos para mostrar.</p>;
+    }
+    return (
+      <div className="data-list">
+        {dataList.map((item) => renderDataBox(item))}
+      </div>
+    );
   };
-
-  // Función para verificar la fecha actual y mostrar la notificación personalizada
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const today = new Date().toDateString();
-      const markedDate = markedDates.find(d => d.date === today);
-      if (markedDate) {
-        alert(`¡Hoy es ${today}! ${markedDate.message}`); // Muestra el mensaje específico de esa fecha
-        handleRemoveDate(today); // Elimina la fecha cuando llega para no repetir la notificación
-      }
-    }, 86400000); // Verifica una vez al día (86400000 ms = 1 día)
-
-    return () => clearInterval(intervalId); // Limpia el intervalo al desmontar el componente
-  }, [markedDates]);
 
   return (
     <div className="App">
       <Navbar />
       <Sidebar />
       <div className="main-content">
-        <h1>Página Principal</h1>
+        <h1>Resumen General</h1>
+
         <div className="content-wrapper">
-          <div className="text-content">
-            <p>Esta es la página principal vacía. Agrega aquí el contenido que desees en el futuro.</p>
+          <div className="table-selector">
+            <button className="custom-btn" onClick={() => handleTableChange('Estudiantes')}>Estudiantes</button>
+            <button className="custom-btn" onClick={() => handleTableChange('Bienes')}>Bienes</button>
+            <button className="custom-btn" onClick={() => handleTableChange('Empleados')}>Empleados</button>
           </div>
-          <div className="calendar-container">
-            <Calendar
-              onChange={handleDateChange}
-              value={date}
-              className="calendar"
-              tileClassName={({ date }) => 
-                markedDates.some(d => d.date === date.toDateString()) ? 'marked-date' : null
-              } // Marca las fechas seleccionadas
-            />
-            <button onClick={handleAddDate} className="add-date-button">Añadir Fecha</button>
-            {selectedDate && <p>Fecha añadida: {selectedDate.toDateString()}</p>}
-            <div className="marked-dates-list">
-              <h3>Fechas Marcadas:</h3>
-              <ul>
-                {markedDates.map((markedDate, index) => (
-                  <li key={index}>
-                    {markedDate.date} - {markedDate.message}
-                    <button onClick={() => handleRemoveDate(markedDate.date)} className="remove-date-button">Eliminar</button>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="filters-container">
+            <h3>Filtros</h3>
+            {renderFilters()}
+          </div>
+          <div className="data-container">
+            <h3>Datos</h3>
+            {renderDataList()}
           </div>
         </div>
       </div>
+
+      {/* Modal para mostrar más detalles */}
+      {selectedItem && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close-btn" onClick={closeModal}>×</span>
+            <h2>Detalles de {selectedItem.nombre} {selectedItem.apellido}</h2>
+            <div className="student-info">
+              <div className="student-row">
+                <div className="student-column">
+                  <p><strong>Nombre:</strong> {selectedItem.nombre}</p>
+                </div>
+                <div className="student-column">
+                  <p><strong>Apellido:</strong> {selectedItem.apellido}</p>
+                </div>
+              </div>
+              <div className="student-row">
+                <div className="student-column">
+                  <p><strong>C.I.:</strong> {selectedItem.ci}</p>
+                </div>
+                <div className="student-column">
+                  <p><strong>Programa:</strong> {selectedItem.programa}</p>
+                </div>
+              </div>
+              {selectedTable === 'Estudiantes' ? (
+                <>
+                  <div className="student-row">
+                    <div className="student-column">
+                      <p><strong>Cátedra:</strong> {selectedItem.catedra}</p>
+                    </div>
+                    <div className="student-column">
+                      <p><strong>Inscripción:</strong> {selectedItem.inscrito}</p>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="student-row">
+                    <div className="student-column">
+                      <p><strong>Cargo:</strong> {selectedItem.cargo}</p>
+                    </div>
+                    <div className="student-column">
+                      <p><strong>Teléfono:</strong> {selectedItem.telefono}</p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

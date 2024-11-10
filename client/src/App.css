@@ -83,6 +83,20 @@
   background-color: #018ABD; 
 }
 
+/* Diseño de columnas para dividir el formulario */
+.form-columns {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Espacio entre las columnas */
+}
+
+.student-section, .representative-section {
+  background-color: #97CBDC; /* Fondo del mismo color que .Datos */
+  padding: 20px;
+  border-radius: 8px;
+  width: 45%; /* Ajuste del tamaño de las secciones */
+}
+
 /* Media queries para pantallas pequeñas */
 @media (max-width: 768px) {
   .App {
@@ -96,5 +110,14 @@
   .Datos {
     width: 100%;
     max-width: none; /* Ancho máximo en pantallas pequeñas */
+  }
+
+  /* Cambiar las columnas a diseño vertical en pantallas pequeñas */
+  .form-columns {
+    flex-direction: column;
+  }
+
+  .student-section, .representative-section {
+    width: 100%; /* Cada sección toma el ancho completo */
   }
 }
