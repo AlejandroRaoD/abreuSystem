@@ -7,160 +7,209 @@ function AppPage() {
   const [selectedTable, setSelectedTable] = useState('Estudiantes');
   const [filters, setFilters] = useState({});
   const [dataList, setDataList] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null); // Guarda el estudiante o empleado seleccionado para el modal
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const handleTableChange = (table) => {
     setSelectedTable(table);
-    setFilters({});
+    setFilters({});  // Reset filters when changing tables
   };
 
   const handleFilterChange = (filterName, value) => {
     setFilters((prevFilters) => ({ ...prevFilters, [filterName]: value }));
   };
 
-  const handleViewMore = (item) => {
-    setSelectedItem(item); // Guarda el estudiante o empleado seleccionado en el estado
-  };
-
-  const closeModal = () => {
-    setSelectedItem(null); // Cierra el modal
-  };
+  const handleViewMore = (item) => setSelectedItem(item);
+  const closeModal = () => setSelectedItem(null);
 
   useEffect(() => {
-    // Cambia los datos según la tabla seleccionada
-    if (selectedTable === 'Estudiantes') {
-      setDataList([
-        { id: 1, nombre: 'John', apellido: 'Doe', programa: 'Música Clásica', catedra: 'Piano', inscrito: 'Inscrito', edad: 12, sexo: 'M', ci: 'V-12345678', fechaInscripcion: '2023-01-01' },
-        { id: 2, nombre: 'Jane', apellido: 'Doe', programa: 'Orquesta Juvenil', catedra: 'Violín', inscrito: 'Reinscrito', edad: 15, sexo: 'F', ci: 'V-87654321', fechaInscripcion: '2022-12-01' },
-      ]);
-    } else if (selectedTable === 'Empleados') {
-      setDataList([
-        { id: 1, nombre: 'Carlos', apellido: 'Perez', ci: 'V-23456789', genero: 'M', cargo: 'Profesor', telefono: '0414-1234567', programa: 'Orquesta Juvenil' },
-        { id: 2, nombre: 'Ana', apellido: 'Gomez', ci: 'V-34567890', genero: 'F', cargo: 'Coordinadora', telefono: '0424-9876543', programa: 'Coro Infantil' },
-      ]);
+    const studentData = [
+      { id: 1, nombre: 'John', apellido: 'Doe', programa: 'Música Clásica', catedra: 'Piano', inscrito: 'Inscrito', edad: 12, sexo: 'M', ci: 'V-12345678', fechaInscripcion: '2023-01-01' },
+      { id: 2, nombre: 'Jane', apellido: 'Doe', programa: 'Orquesta Juvenil', catedra: 'Violín', inscrito: 'Reinscrito', edad: 15, sexo: 'F', ci: 'V-87654321', fechaInscripcion: '2022-12-01' },
+    ];
+
+    const employeeData = [
+      { id: 1, nombre: 'Carlos', apellido: 'Perez', ci: 'V-23456789', genero: 'M', cargo: 'Profesor', telefono: '0414-1234567', programa: 'Orquesta Juvenil' },
+      { id: 2, nombre: 'Ana', apellido: 'Gomez', ci: 'V-34567890', genero: 'F', cargo: 'Coordinadora', telefono: '0424-9876543', programa: 'Coro Infantil' },
+    ];
+
+    const bienesData = [
+      { id: 1, nombre: 'Piano', nroSerie: 'A123', serial: 'S001', marca: 'Yamaha', estado: 'Bueno' },
+      { id: 2, nombre: 'Violín', nroSerie: 'B456', serial: 'S002', marca: 'Stradivarius', estado: 'Excelente' },
+    ];
+
+    // Filter data based on the selected filters
+    const filteredData = (data) => {
+      return data.filter((item) => {
+        return Object.keys(filters).every((key) => {
+          if (filters[key] === '') return true; // Skip if filter is empty
+          return item[key]?.toString().toLowerCase().includes(filters[key].toLowerCase());
+        });
+      });
+    };
+
+    switch (selectedTable) {
+      case 'Estudiantes':
+        setDataList(filteredData(studentData));
+        break;
+      case 'Empleados':
+        setDataList(filteredData(employeeData));
+        break;
+      case 'Bienes':
+        setDataList(filteredData(bienesData));
+        break;
+      default:
+        setDataList([]);
     }
   }, [selectedTable, filters]);
 
   const renderFilters = () => {
-    switch (selectedTable) {
-      case 'Estudiantes':
-        return (
-          <div className="filters">
-            <input type="text" placeholder="Nombre" onChange={(e) => handleFilterChange('nombre', e.target.value)} />
-            <input type="text" placeholder="Apellido" onChange={(e) => handleFilterChange('apellido', e.target.value)} />
-            <select onChange={(e) => handleFilterChange('programa', e.target.value)}>
-              <option value="">Seleccione un Programa</option>
-              <option value="Música Clásica">Música Clásica</option>
-              <option value="Orquesta Juvenil">Orquesta Juvenil</option>
-              <option value="Coro Infantil">Coro Infantil</option>
-            </select>
-            <select onChange={(e) => handleFilterChange('catedra', e.target.value)}>
-              <option value="">Seleccione una Cátedra</option>
-              <option value="Piano">Piano</option>
-              <option value="Violín">Violín</option>
-              <option value="Percusión">Percusión</option>
-            </select>
-            <select onChange={(e) => handleFilterChange('sexo', e.target.value)}>
-              <option value="">Seleccione el Género</option>
-              <option value="M">Masculino</option>
-              <option value="F">Femenino</option>
-            </select>
-            <input type="number" placeholder="Edad" onChange={(e) => handleFilterChange('edad', e.target.value)} />
-            <input type="text" placeholder="Cédula de Identidad (C.I.)" onChange={(e) => handleFilterChange('ci', e.target.value)} />
-            <input type="date" placeholder="Fecha de Inscripción" onChange={(e) => handleFilterChange('fechaInscripcion', e.target.value)} />
-          </div>
-        );
-      case 'Empleados':
-        return (
-          <div className="filters">
-            <input type="text" placeholder="Nombre" onChange={(e) => handleFilterChange('nombre', e.target.value)} />
-            <input type="text" placeholder="Apellido" onChange={(e) => handleFilterChange('apellido', e.target.value)} />
-            <input type="text" placeholder="Cédula de Identidad (C.I.)" onChange={(e) => handleFilterChange('ci', e.target.value)} />
-            <select onChange={(e) => handleFilterChange('genero', e.target.value)}>
-              <option value="">Seleccione el Género</option>
-              <option value="M">Masculino</option>
-              <option value="F">Femenino</option>
-            </select>
-            <select onChange={(e) => handleFilterChange('cargo', e.target.value)}>
-              <option value="">Seleccione un Cargo</option>
-              <option value="Profesor">Profesor</option>
-              <option value="Coordinador">Coordinador</option>
-            </select>
-            <input type="text" placeholder="Teléfono" onChange={(e) => handleFilterChange('telefono', e.target.value)} />
-            <select onChange={(e) => handleFilterChange('programa', e.target.value)}>
-              <option value="">Seleccione un Programa</option>
-              <option value="Orquesta Juvenil">Orquesta Juvenil</option>
-              <option value="Coro Infantil">Coro Infantil</option>
-            </select>
-          </div>
-        );
-      default:
-        return null;
+    if (selectedTable === 'Estudiantes') {
+      return (
+        <>
+          <input
+            type="text"
+            placeholder="Nombre"
+            onChange={(e) => handleFilterChange('nombre', e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Apellido"
+            onChange={(e) => handleFilterChange('apellido', e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="C.I"
+            onChange={(e) => handleFilterChange('ci', e.target.value)}
+          />
+          <select onChange={(e) => handleFilterChange('programa', e.target.value)}>
+            <option value="">Seleccione Programa</option>
+            <option value="Música Clásica">Música Clásica</option>
+            <option value="Orquesta Juvenil">Orquesta Juvenil</option>
+          </select>
+          <select onChange={(e) => handleFilterChange('catedra', e.target.value)}>
+            <option value="">Seleccione Cátedra</option>
+            <option value="Piano">Piano</option>
+            <option value="Violín">Violín</option>
+          </select>
+        </>
+      );
+    } else if (selectedTable === 'Bienes') {
+      return (
+        <>
+          <input
+            type="text"
+            placeholder="Nombre"
+            onChange={(e) => handleFilterChange('nombre', e.target.value)}
+          />
+          <select onChange={(e) => handleFilterChange('estado', e.target.value)}>
+            <option value="">Seleccione Estado</option>
+            <option value="Bueno">Bueno</option>
+            <option value="Excelente">Excelente</option>
+          </select>
+          <input
+            type="text"
+            placeholder="Marca"
+            onChange={(e) => handleFilterChange('marca', e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Serial"
+            onChange={(e) => handleFilterChange('serial', e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Nro de Serie"
+            onChange={(e) => handleFilterChange('nroSerie', e.target.value)}
+          />
+        </>
+      );
+    } else if (selectedTable === 'Empleados') {
+      return (
+        <>
+          <input
+            type="text"
+            placeholder="Nombre"
+            onChange={(e) => handleFilterChange('nombre', e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Apellido"
+            onChange={(e) => handleFilterChange('apellido', e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="C.I"
+            onChange={(e) => handleFilterChange('ci', e.target.value)}
+          />
+          <select onChange={(e) => handleFilterChange('programa', e.target.value)}>
+            <option value="">Seleccione Programa</option>
+            <option value="Orquesta Juvenil">Orquesta Juvenil</option>
+            <option value="Coro Infantil">Coro Infantil</option>
+          </select>
+          <select onChange={(e) => handleFilterChange('cargo', e.target.value)}>
+            <option value="">Seleccione Cargo</option>
+            <option value="Profesor">Profesor</option>
+            <option value="Coordinadora">Coordinadora</option>
+          </select>
+        </>
+      );
     }
+    return null;
   };
 
-  const renderDataBox = (item) => (
-    <div key={item.id} className="student-box">
-      <div className="student-info">
-        <div className="student-row">
-          <div className="student-column">
-            <p><strong>Nombre:</strong></p>
-            <p>{item.nombre}</p>
-          </div>
-          <div className="student-column">
-            <p><strong>Apellido:</strong></p>
-            <p>{item.apellido}</p>
-          </div>
-        </div>
-        <div className="student-row">
-          <div className="student-column">
-            <p><strong>C.I.:</strong></p>
-            <p>{item.ci}</p>
-          </div>
-          <div className="student-column">
-            <p><strong>Programa:</strong></p>
-            <p>{item.programa}</p>
-          </div>
-        </div>
-        {selectedTable === 'Estudiantes' ? (
-          <>
-            <div className="student-row">
-              <div className="student-column">
-                <p><strong>Cátedra:</strong></p>
-                <p>{item.catedra}</p>
-              </div>
-              <div className="student-column">
-                <p><strong>Inscripción:</strong></p>
-                <p>{item.inscrito}</p>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="student-row">
-              <div className="student-column">
-                <p><strong>Cargo:</strong></p>
-                <p>{item.cargo}</p>
-              </div>
-              <div className="student-column">
-                <p><strong>Teléfono:</strong></p>
-                <p>{item.telefono}</p>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-      <button className="view-more-btn" onClick={() => handleViewMore(item)}>Ver más</button>
-    </div>
-  );
-
-  const renderDataList = () => {
-    if (dataList.length === 0) {
-      return <p>No hay datos para mostrar.</p>;
-    }
+  const renderDataBox = (item) => {
     return (
-      <div className="data-list">
-        {dataList.map((item) => renderDataBox(item))}
+      <div key={item.id} className="student-box">
+        <div className="student-info">
+          {selectedTable === 'Bienes' ? (
+            <>
+              <p><strong>Nombre:</strong> {item.nombre}</p>
+              <p><strong>Nro de Serie:</strong> {item.nroSerie}</p>
+              <p><strong>Serial:</strong> {item.serial}</p>
+              <p><strong>Marca:</strong> {item.marca}</p>
+              <p><strong>Estado:</strong> {item.estado}</p>
+            </>
+          ) : (
+            <>
+              <div className="student-row">
+                <div className="student-column">
+                  <p><strong>Nombre:</strong> {item.nombre}</p>
+                </div>
+                <div className="student-column">
+                  <p><strong>Apellido:</strong> {item.apellido}</p>
+                </div>
+              </div>
+              <div className="student-row">
+                <div className="student-column">
+                  <p><strong>C.I.:</strong> {item.ci}</p>
+                </div>
+                <div className="student-column">
+                  <p><strong>Programa:</strong> {item.programa}</p>
+                </div>
+              </div>
+              {selectedTable === 'Estudiantes' ? (
+                <div className="student-row">
+                  <div className="student-column">
+                    <p><strong>Cátedra:</strong> {item.catedra}</p>
+                  </div>
+                  <div className="student-column">
+                    <p><strong>Inscripción:</strong> {item.inscrito}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="student-row">
+                  <div className="student-column">
+                    <p><strong>Cargo:</strong> {item.cargo}</p>
+                  </div>
+                  <div className="student-column">
+                    <p><strong>Teléfono:</strong> {item.telefono}</p>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+        <button className="view-more-btn" onClick={() => handleViewMore(item)}>Ver más</button>
       </div>
     );
   };
@@ -171,70 +220,52 @@ function AppPage() {
       <Sidebar />
       <div className="main-content">
         <h1>Resumen General</h1>
-
-        <div className="content-wrapper">
-          <div className="table-selector">
-            <button className="custom-btn" onClick={() => handleTableChange('Estudiantes')}>Estudiantes</button>
-            <button className="custom-btn" onClick={() => handleTableChange('Bienes')}>Bienes</button>
-            <button className="custom-btn" onClick={() => handleTableChange('Empleados')}>Empleados</button>
-          </div>
-          <div className="filters-container">
-            <h3>Filtros</h3>
-            {renderFilters()}
-          </div>
-          <div className="data-container">
-            <h3>Datos</h3>
-            {renderDataList()}
-          </div>
+        <div className="table-selector">
+          <button onClick={() => handleTableChange('Estudiantes')}>Estudiantes</button>
+          <button onClick={() => handleTableChange('Empleados')}>Empleados</button>
+          <button onClick={() => handleTableChange('Bienes')}>Bienes</button>
+        </div>
+        <div className="filters">{renderFilters()}</div>
+        <div className="data-container">
+          {dataList.map(renderDataBox)}
         </div>
       </div>
-
-      {/* Modal para mostrar más detalles */}
       {selectedItem && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close-btn" onClick={closeModal}>×</span>
-            <h2>Detalles de {selectedItem.nombre} {selectedItem.apellido}</h2>
-            <div className="student-info">
-              <div className="student-row">
-                <div className="student-column">
-                  <p><strong>Nombre:</strong> {selectedItem.nombre}</p>
-                </div>
-                <div className="student-column">
-                  <p><strong>Apellido:</strong> {selectedItem.apellido}</p>
-                </div>
-              </div>
-              <div className="student-row">
-                <div className="student-column">
-                  <p><strong>C.I.:</strong> {selectedItem.ci}</p>
-                </div>
-                <div className="student-column">
-                  <p><strong>Programa:</strong> {selectedItem.programa}</p>
-                </div>
-              </div>
+        <div className="modal-overlay">
+          <div className="modal">
+            <button className="close-modal" onClick={closeModal}>X</button>
+            <h2>Detalles</h2>
+            <div className="modal-content">
               {selectedTable === 'Estudiantes' ? (
                 <>
-                  <div className="student-row">
-                    <div className="student-column">
-                      <p><strong>Cátedra:</strong> {selectedItem.catedra}</p>
-                    </div>
-                    <div className="student-column">
-                      <p><strong>Inscripción:</strong> {selectedItem.inscrito}</p>
-                    </div>
-                  </div>
+                  <p><strong>Nombre:</strong> {selectedItem.nombre}</p>
+                  <p><strong>Apellido:</strong> {selectedItem.apellido}</p>
+                  <p><strong>Programa:</strong> {selectedItem.programa}</p>
+                  <p><strong>Cátedra:</strong> {selectedItem.catedra}</p>
+                  <p><strong>Inscripción:</strong> {selectedItem.inscrito}</p>
+                  <p><strong>C.I.:</strong> {selectedItem.ci}</p>
+                  <p><strong>Edad:</strong> {selectedItem.edad}</p>
+                  <p><strong>Sexo:</strong> {selectedItem.sexo}</p>
+                  <p><strong>Fecha de Inscripción:</strong> {selectedItem.fechaInscripcion}</p>
                 </>
-              ) : (
+              ) : selectedTable === 'Empleados' ? (
                 <>
-                  <div className="student-row">
-                    <div className="student-column">
-                      <p><strong>Cargo:</strong> {selectedItem.cargo}</p>
-                    </div>
-                    <div className="student-column">
-                      <p><strong>Teléfono:</strong> {selectedItem.telefono}</p>
-                    </div>
-                  </div>
+                  <p><strong>Nombre:</strong> {selectedItem.nombre}</p>
+                  <p><strong>Apellido:</strong> {selectedItem.apellido}</p>
+                  <p><strong>C.I.:</strong> {selectedItem.ci}</p>
+                  <p><strong>Teléfono:</strong> {selectedItem.telefono}</p>
+                  <p><strong>Cargo:</strong> {selectedItem.cargo}</p>
+                  <p><strong>Programa:</strong> {selectedItem.programa}</p>
                 </>
-              )}
+              ) : selectedTable === 'Bienes' ? (
+                <>
+                  <p><strong>Nombre:</strong> {selectedItem.nombre}</p>
+                  <p><strong>Marca:</strong> {selectedItem.marca}</p>
+                  <p><strong>Estado:</strong> {selectedItem.estado}</p>
+                  <p><strong>Serial:</strong> {selectedItem.serial}</p>
+                  <p><strong>Nro de Serie:</strong> {selectedItem.nroSerie}</p>
+                </>
+              ) : null}
             </div>
           </div>
         </div>
